@@ -1,0 +1,2 @@
+1. Django athorization
+2. Create better UI/UX

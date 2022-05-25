@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Страница о продукте</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+</head>
+<body>
+
+    <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
+      <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
+        <span class="fs-4">Экспертная система</span>
+      </a>
+
+      <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
+        <a class="me-3 py-2 text-dark text-decoration-none" href="/">Вычислить</a>
+        <a class="me-3 py-2 text-dark text-decoration-none" href="/history">История</a>
+        <a class="me-3 py-2 text-dark text-decoration-none" href="/">Выйти</a>
+      </nav>
+    </div>
+
+    <h1>История</h1>
+    <table class="table table-striped">
+    <tr>
+    <th>Comment</th>
+    <th>Result expert system</th>
+    <th>Meta data</th>
+    <th>Дата</th>
+    </tr>
+    {% if results %}
+        {% for element in results %}
+            <tr>
+                <th>{{ element.comment }}</th>
+                <th><pre>{{ element.result_expert_system }}</pre></th>
+                <th><pre>{{ element.result_network }}</pre></th>
+                <th>{{ element.data }}</th>
+            </tr>
+        {% endfor %}
+    {% endif %}
+    </table>
+</body>
+</html>

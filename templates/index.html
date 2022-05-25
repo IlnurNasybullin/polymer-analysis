@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Главная страница</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
+      <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
+        <span class="fs-4">Экспертная система</span>
+      </a>
+
+      <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
+        <a class="me-3 py-2 text-dark text-decoration-none" href="/main">Вычислить</a>
+        <a class="me-3 py-2 text-dark text-decoration-none" href="/history">История</a>
+        <a class="me-3 py-2 text-dark text-decoration-none" href="/logout">Выйти</a>
+      </nav>
+    </div>
+
+        <div class="container" style="max-width: 500px">
+            <h1>Вычислить</h1>
+
+            <input id="image_input" name="upload_image" type="file" accept="image/*" onchange="loadFile(event)"/>
+            <img id="image_output" width="400" />
+            <script>
+              var loadFile = function(event) {
+	              var image = document.getElementById('image_output');
+	              image.src = URL.createObjectURL(event.target.files[0]);
+              };
+            </script>
+
+            <div class="form-floating">
+                {% csrf_token %}
+                <h4>Описание картинки</h4>
+                <div>
+                    <input class="form-control" name="umPerPixel" type="number" placeholder="1 µm = x px" ><br>
+                </div>
+                <br>
+
+                <h4>Данные для решения задачи</h4>
+                <div>
+                    <input class="form-control" name="temperature" type="number" placeholder="Температура спекания (°С)"><br>
+                    <input class="form-control" name="minDisp" type="number" placeholder="Минимальная дисперсность (µm)"><br>
+                    <input class="form-control" name="maxDisp" type="number" placeholder="Максимальная дисперсность (µm)"><br>
+                </div>
+                <br>
+
+                <button class="btn btn-success" onclick="calculate(event)">Вычислить</button>
+                <script>
+                  function getCookie(name) {
+                    let matches = document.cookie.match(new RegExp(
+                      "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+                    ));
+                    return matches ? decodeURIComponent(matches[1]) : undefined;
+                  };
+                </script>
+                <script>
+                  function setResult(jsonResult) {
+                      document.getElementById("prImage").src=`data:image/png;base64,${jsonResult.prImage}`;
+                      document.getElementById("displotImage").src=`data:image/png;base64,${jsonResult.displotImage}`;
+                      document.getElementById("allPolymersCount").value=jsonResult.allPolymersCount;
+                      document.getElementById("dispPolymersCount").value=jsonResult.dispPolymersCount;
+                      document.getElementById("meanValue").value=jsonResult.meanValue;
+                  }
+
+                  var calculate = function(event) {
+                        const formData = new FormData();
+                        
+                        formData.append("image", document.getElementById("image_input").files[0]);
+                        formData.append("umPerPixel", document.getElementsByName("umPerPixel")[0].value);
+                        formData.append("temperature", document.getElementsByName("temperature")[0].value);
+                        formData.append("minDisp", document.getElementsByName("minDisp")[0].value);
+                        formData.append("maxDisp", document.getElementsByName("maxDisp")[0].value);
+
+                        fetch('/calculate', {
+                            method: 'POST',
+                            headers: {
+                              contentType: "multipart/form-data",
+                              "X-CSRFToken": getCookie('csrftoken')
+                            },
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(response => setResult(response));
+                    }
+                </script>
+
+                <h2>Результат</h2>
+
+                <div>
+                  <label for="prImage">Изображение с распознанными частицами</label>
+                  <img id="prImage" width="400">
+                </div>
+                
+                <div>
+                  <label for="displotImage">График распределения значений ЭС для частиц</label>
+                  <img id="displotImage" width="400">
+                </div>
+                
+                <div>
+                  <label for="allPolymersCount">Количество всех распознанных частиц:</label>
+                  <input id="allPolymersCount" type="number" readonly>
+                </div>
+                
+                <div>
+                  <label for="dispPolymersCount">Количество частиц, удовлетворяющих требованию дисперсности:</label>
+                  <input id="dispPolymersCount" type="number" readonly>
+                </div>
+                
+                <div>
+                  <label for="meanValue">Среднее значение, выдаваемое ЭС:</label>
+                  <input id="meanValue" type="number" readonly>
+                </div>
+
+                <input class="form-control" id="comment" type="text" placeholder="Комментарий"><br>
+                <button class="btn btn-dark" onclick="saveData(event)">Сохранить</button>
+
+                <input id="email" type="text" readonly style="display: none" value={{user.email}}>
+                <script>
+                  var saveData = function(event) {
+                    console.log("save data")
+                    let data = {
+                      email: document.getElementById("email").value,
+                      umPerPixel: document.getElementsByName("umPerPixel")[0].value,
+                      allPolymersCount: document.getElementById("allPolymersCount").value,
+                      dispPolymersCount: document.getElementById("dispPolymersCount").value,
+                      meanValue: document.getElementById("meanValue").value,
+                      comment: document.getElementById("comment").value
+                    } 
+
+                    fetch('/save', {
+                      method: 'POST',
+                      body: JSON.stringify(data),
+                      headers: {
+                        contentType: "application/json;charset=utf-8",
+                        "X-CSRFToken": getCookie('csrftoken')
+                      }
+                    }).then(response => response)
+                  }
+                </script>
+            </form>
+        </div>
+</body>
+</html>
