@@ -1,4 +1,4 @@
 /db.sqlite3
 /env
 **/__pycache__
-./expert_system/particle_model/weights/**
+/expert_system/particle_model/weights/**
