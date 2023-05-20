@@ -42,7 +42,7 @@ class ParticleNet:
 
             df_list.append(df)
 
-        return df_list, results.imgs[0]
+        return df_list, results.ims[0]
 
     @torch.inference_mode()
     def _forward(self, images):

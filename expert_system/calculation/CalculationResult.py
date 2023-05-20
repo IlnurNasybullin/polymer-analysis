@@ -29,11 +29,11 @@ class Calculation:
 
         all_polymers_count = len(df)
 
-        disps = df["particle_size"]
-        print(disps)
+        disps = df["particle_size"] / self.um_per_pixel
+        print(df)
         disp_polymers = df[(disps >= self.min_disp) & (disps <= self.max_disp)][["roundness", "roughness"]]
 
-        disp_polymers_count = len(df)
+        disp_polymers_count = len(disp_polymers)
         dict_res = ExpertSystem(disp_polymers, self.temperature).to_result()
 
         res = {
