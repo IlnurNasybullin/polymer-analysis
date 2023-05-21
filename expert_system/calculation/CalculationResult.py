@@ -8,6 +8,7 @@ import base64
 
 model_path='expert_system/particle_model/weights/particles-yolov5l-best.pt'
 
+# TODO: refactor this class for unit testing
 class Calculation:
     def __init__(self, image_bytes: bytearray, um_per_pixel: float, temperature: float, min_disp: float, max_disp: float) -> None:
         self.image = Image.open(io.BytesIO(image_bytes))
