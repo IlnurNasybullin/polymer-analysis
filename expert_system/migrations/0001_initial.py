@@ -16,11 +16,12 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('comment', models.TextField(verbose_name='Коммент')),
-                ('data', models.DateField()),
+                ('created', models.DateTimeField(verbose_name='Сохранён')),
                 ('id_user', models.EmailField(max_length=254, verbose_name='Почта')),
                 ('image_characteristics', models.TextField(verbose_name='Характеристики изображения')),
                 ('result_network', models.TextField(verbose_name='Результат от нейронной сети')),
                 ('result_expert_system', models.TextField(verbose_name='Результат от экспертной системы')),
+                ('img_uri', models.TextField(verbose_name='Ссылка на изображение'))
             ],
         ),
     ]

@@ -7,6 +7,12 @@ from django.contrib.auth import logout
 from expert_system.calculation.CalculationResult import CalculationAdapter
 from .models import Result
 import json
+from pathlib import Path
+import datetime
+
+from base64 import b64decode
+
+SAVE_DIR = '.polymer-analysis'
 
 # TODO: save data (with current date)!
 def index(request):
@@ -22,12 +28,31 @@ def save(request):
         mean_value = float(data["meanValue"])
         image_data = float(data["umPerPixel"])
         comment = data["comment"]
+        img_base64 = data["prImage"]
+
+        now = datetime.datetime.now(datetime.timezone.utc)
+        filename = f'prediction-image-{now.strftime("%Y-%m-%dT%H%M%S")}.png'
+
+        img_url = save_img(img_base64, filename)
+        print(img_url)
+
         jsn = "{ \"all polymers count\": " + str(all_polymers_count) + ", " + "\" disp polymers count\" :" + str(disp_polymers_count) + ", " +  "\" umPerPixels\" :" + str(image_data)+" }"        
 
-        resul = Result.objects.create_result(str(comment), str(email), str(image_data), jsn, str(mean_value))
+        resul = Result.objects.create_result(str(comment), now, str(email), str(image_data), jsn, str(mean_value), uri=img_url)
         resul.save()
 
         return JsonResponse({})
+
+def save_img(img_base64: str, filename: str):
+    dir = Path.home() / SAVE_DIR
+    dir.mkdir(exist_ok=True)
+
+    fdir = dir / filename
+
+    with open(fdir, 'wb') as f:
+        f.write(b64decode(img_base64))
+
+    return fdir.as_uri()
 
 def history(request):
     results = Result.objects.all()

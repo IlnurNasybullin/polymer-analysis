@@ -122,14 +122,14 @@
                 <input id="email" type="text" readonly style="display: none" value={{user.email}}>
                 <script>
                   var saveData = function(event) {
-                    console.log("save data")
                     let data = {
                       email: document.getElementById("email").value,
                       umPerPixel: document.getElementsByName("umPerPixel")[0].value,
                       allPolymersCount: document.getElementById("allPolymersCount").value,
                       dispPolymersCount: document.getElementById("dispPolymersCount").value,
                       meanValue: document.getElementById("meanValue").value,
-                      comment: document.getElementById("comment").value
+                      comment: document.getElementById("comment").value,
+                      prImage: document.getElementById("prImage").src.replaceAll(new RegExp('^data:image/png;base64,', 'g'), '')
                     } 
 
                     fetch('/save', {

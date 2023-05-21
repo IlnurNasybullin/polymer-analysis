@@ -29,6 +29,7 @@
     <th>Result expert system</th>
     <th>Meta data</th>
     <th>Дата</th>
+    <th>Ссылка на изображение</th>
     </tr>
     {% if results %}
         {% for element in results %}
@@ -36,7 +37,8 @@
                 <th>{{ element.comment }}</th>
                 <th><pre>{{ element.result_expert_system }}</pre></th>
                 <th><pre>{{ element.result_network }}</pre></th>
-                <th>{{ element.data }}</th>
+                <th>{{ element.created }}</th>
+                <th><a href={{element.img_uri}} target="_blank" rel="noopener noreferrer">{{ element.img_uri }}</a></th>
             </tr>
         {% endfor %}
     {% endif %}
