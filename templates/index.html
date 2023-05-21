@@ -68,6 +68,8 @@
                   }
 
                   var calculate = function(event) {
+                        let btn = event.target;
+                        btn.setAttribute('disabled', 'disabled');
                         const formData = new FormData();
                         
                         formData.append("image", document.getElementById("image_input").files[0]);
@@ -85,7 +87,10 @@
                             body: formData
                         })
                         .then(response => response.json())
-                        .then(response => setResult(response));
+                        .then(response => {
+                          setResult(response);
+                          btn.removeAttribute('disabled');
+                        });
                     }
                 </script>
 
@@ -122,6 +127,8 @@
                 <input id="email" type="text" readonly style="display: none" value={{user.email}}>
                 <script>
                   var saveData = function(event) {
+                    let btn = event.target;
+                    btn.setAttribute('disabled', 'disabled');
                     let data = {
                       email: document.getElementById("email").value,
                       umPerPixel: document.getElementsByName("umPerPixel")[0].value,
@@ -143,6 +150,9 @@
                         "X-CSRFToken": getCookie('csrftoken')
                       }
                     }).then(response => response)
+                    .then(response => {
+                        setTimeout(() => btn.removeAttribute('disabled'), 1000)
+                    })
                   }
                 </script>
             </form>

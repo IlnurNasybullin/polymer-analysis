@@ -37,7 +37,6 @@ def save(request):
         filename = f'prediction-image-{now.strftime("%Y-%m-%dT%H%M%S")}.png'
 
         img_url = save_img(img_base64, filename)
-        print(img_url)
 
         jsn_dict = {
             "allPolymersCount": all_polymers_count,

@@ -30,7 +30,6 @@ class Calculation:
         all_polymers_count = len(df)
 
         disps = df["particle_size"] / self.um_per_pixel
-        print(df)
         disp_polymers = df[(disps >= self.min_disp) & (disps <= self.max_disp)][["roundness", "roughness"]]
 
         disp_polymers_count = len(disp_polymers)
