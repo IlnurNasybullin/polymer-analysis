@@ -26,9 +26,12 @@ def save(request):
         all_polymers_count = int(data["allPolymersCount"])
         disp_polymers_count = int(data["dispPolymersCount"])
         mean_value = float(data["meanValue"])
-        image_data = float(data["umPerPixel"])
+        um_per_pixel = float(data["umPerPixel"])
         comment = data["comment"]
         img_base64 = data["prImage"]
+        min_disp = int(data["minDisp"])
+        max_disp = int(data["maxDisp"])
+        temperature = int(data["temperature"])
 
         now = datetime.datetime.now(datetime.timezone.utc)
         filename = f'prediction-image-{now.strftime("%Y-%m-%dT%H%M%S")}.png'
@@ -36,9 +39,18 @@ def save(request):
         img_url = save_img(img_base64, filename)
         print(img_url)
 
-        jsn = "{ \"all polymers count\": " + str(all_polymers_count) + ", " + "\" disp polymers count\" :" + str(disp_polymers_count) + ", " +  "\" umPerPixels\" :" + str(image_data)+" }"        
+        jsn_dict = {
+            "allPolymersCount": all_polymers_count,
+            "dispPolymersCount": disp_polymers_count,
+            "umPerPixel": um_per_pixel,
+            "minDisp": min_disp,
+            "maxDisp": max_disp,
+            "temperature": temperature
+        }
 
-        resul = Result.objects.create_result(str(comment), now, str(email), str(image_data), jsn, str(mean_value), uri=img_url)
+        jsn = json.dumps(jsn_dict)
+
+        resul = Result.objects.create_result(str(comment), now, str(email), str(um_per_pixel), jsn, str(mean_value), uri=img_url)
         resul.save()
 
         return JsonResponse({})
