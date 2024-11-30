@@ -65,7 +65,7 @@ class ParticleNet:
         for i in range(result.xyxy[0].shape[0]):
             target = (
                 image.resize(
-                    (self._size, self._size), Image.ANTIALIAS, box=result.xyxy[0][i, :4]
+                    (self._size, self._size), Image.LANCZOS, box=result.xyxy[0][i, :4].numpy()
                 )
                 .convert("L")
                 .filter(ImageFilter.MedianFilter(3))
